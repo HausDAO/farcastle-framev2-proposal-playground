@@ -11,6 +11,12 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        raisinBlack: "#17151F",
+        darkPurple: "#341A34",
+        aliceBlue: "#00B1CC",
+        moonstone: "#EAF8FF",
+        rasedaGreen: "#707C4E",
+        rustyRed: "#CD4A50",
       },
     },
   },

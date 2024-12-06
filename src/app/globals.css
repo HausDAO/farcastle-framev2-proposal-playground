@@ -9,13 +9,18 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #17151f;
     --foreground: #ededed;
   }
 }
 
 body {
   color: var(--foreground);
-  background: var(--background);
-  font-family: 'Inter', Helvetica, Arial, sans-serif;
+  background-color: var(--background);
+  font-family: "Inter", Helvetica, Arial, sans-serif;
+}
+
+.fly-bg {
+  background: no-repeat
+    url("https://daohaus.mypinata.cloud/ipfs/QmeE6APDGW53dtvae8Z8wQVXbQiFYUwGUXiWDcX1AV2GdH");
 }

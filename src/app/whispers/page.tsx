@@ -1,5 +1,7 @@
 import { Metadata } from "next";
-import App from "./app";
+// import App from "./app";
+
+import Whispers from "../../components/Whisper";
 
 const appUrl = process.env.NEXT_PUBLIC_URL;
 
@@ -7,13 +9,13 @@ const frame = {
   version: "next",
   imageUrl: `${appUrl}/opengraph-image`,
   button: {
-    title: "Launch Frame",
+    title: "Launch",
     action: {
       type: "launch_frame",
-      name: "The Fly",
+      name: "Farcastle Whispers",
       url: appUrl,
       splashImageUrl: `${appUrl}/splash.png`,
-      splashBackgroundColor: "#f7f7f7",
+      splashBackgroundColor: "#17151F",
     },
   },
 };
@@ -22,10 +24,10 @@ export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "The Fly",
+    title: "Farcastle Whispers",
     openGraph: {
-      title: "The Fly",
-      description: "Something skittering behind the stone...",
+      title: "Farcastle Whispers",
+      description: "The Fly Hears",
     },
     other: {
       "fc:frame": JSON.stringify(frame),
@@ -33,6 +35,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function Home() {
-  return <App />;
+export default function Whisper() {
+  return <Whispers />;
 }

@@ -1,16 +1,21 @@
 import { createConfig, http, WagmiProvider } from "wagmi";
-import { base, mainnet } from "wagmi/chains";
+import { base, sepolia } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 import { frameConnector } from "~/lib/connector";
+import { injected } from "wagmi/connectors";
+
+// console.log("sdk", sdk.context);
 
 export const config = createConfig({
-  chains: [base, mainnet],
+  chains: [base, sepolia],
   transports: {
     // Configure dedicated RPC providers when using in production
     [base.id]: http(),
-    [mainnet.id]: http(),
+    [sepolia.id]: http(),
   },
-  connectors: [frameConnector()],
+  // connectors: [frameConnector()],
+  connectors: [injected()],
 });
 
 const queryClient = new QueryClient();

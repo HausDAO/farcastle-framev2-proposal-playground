@@ -37,6 +37,8 @@ export default function Demo(
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
 
+  console.log("address", address);
+
   const {
     sendTransaction,
     error: sendTxError,
@@ -278,7 +280,7 @@ export default function Demo(
 
         {chainId && (
           <div className="my-2 text-xs">
-           Chain ID: <pre className="inline">{chainId}</pre>
+            Chain ID: <pre className="inline">{chainId}</pre>
           </div>
         )}
 
@@ -293,7 +295,7 @@ export default function Demo(
             {isConnected ? "Disconnect" : "Connect"}
           </Button>
         </div>
-        
+
         <div className="mb-4">
           <SignMessage />
         </div>
@@ -357,7 +359,7 @@ function SwitchChain() {
   } = useSwitchChain();
 
   const handleSwitchChain = useCallback(() => {
-    switchChain({ chainId: chainId === 1 ? 8453 : 1  });
+    switchChain({ chainId: chainId === 1 ? 8453 : 1 });
   }, [switchChain, chainId]);
 
   return (
@@ -387,15 +389,14 @@ function SignMessage() {
 
   const handleSignMessage = useCallback(async () => {
     if (!isConnected) {
-      await connectAsync({ 
-        chainId: base.id, 
-        connector: config.connectors[0] 
-      })
+      await connectAsync({
+        chainId: base.id,
+        connector: config.connectors[0],
+      });
     }
 
     signMessage({ message: "Hello from Frames v2!" });
   }, [connectAsync, isConnected, signMessage]);
-
 
   return (
     <>
@@ -428,16 +429,14 @@ function SendEth() {
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
-      hash: data
+      hash: data,
     });
 
   const handleSend = useCallback(() => {
-    sendTransaction(
-      {
-        to: "0x4bBFD120d9f352A0BEd7a014bd67913a2007a878",
-        value: 1n,
-      }
-    );
+    sendTransaction({
+      to: "0x4bBFD120d9f352A0BEd7a014bd67913a2007a878",
+      value: 1n,
+    });
   }, [sendTransaction]);
 
   return (
@@ -467,10 +466,7 @@ function SendEth() {
   );
 }
 
-
-  const renderError = (error: Error | null) => {
-    if (!error) return null;
-    return <div className="text-red-500 text-xs mt-1">{error.message}</div>;
-  };
-
-
+const renderError = (error: Error | null) => {
+  if (!error) return null;
+  return <div className="text-red-500 text-xs mt-1">{error.message}</div>;
+};
