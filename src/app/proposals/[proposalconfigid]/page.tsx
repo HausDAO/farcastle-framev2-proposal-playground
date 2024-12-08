@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import ProposalForm from "~/components/ProposalForm";
+import ProposalForm from "../../../components/ProposalForm";
 
 const appUrl = process.env.NEXT_PUBLIC_URL;
 

@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import ProposalList from "~/components/ProposalList";
+import ProposalList from "../../components/ProposalList";
 
 const appUrl = process.env.NEXT_PUBLIC_URL;
 
