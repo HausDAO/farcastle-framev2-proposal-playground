@@ -1,4 +1,4 @@
-import { Validate } from "react-hook-form";
+import { parseUnits } from "viem";
 import {
   isArray,
   isBoolean,
@@ -7,7 +7,6 @@ import {
   isNumberish,
   isString,
 } from "./typeguards";
-import { toBaseUnits } from "./units";
 export const ValErrMsgs = {
   number: "Field must be a number",
   boolean: "Field must be a boolean",
@@ -18,6 +17,10 @@ export const ValErrMsgs = {
   percent: "Field must be a valid percentage",
   object: "Field must be a valid JSON Object",
 };
+
+export const toBaseUnits = (amount: string, decimals = 18) =>
+  parseUnits(amount, decimals).toString();
+
 export const ValidateField = {
   number: (val: unknown) => (isNumberish(val) ? true : ValErrMsgs.number),
   boolean: (val: unknown) => (isBoolean(val) ? true : ValErrMsgs.boolean),

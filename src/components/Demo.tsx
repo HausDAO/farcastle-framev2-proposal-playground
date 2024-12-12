@@ -19,7 +19,7 @@ import {
 
 import { config } from "~/components/providers/WagmiProvider";
 import { Button } from "~/components/ui/Button";
-import { truncateAddress } from "~/lib/truncateAddress";
+import { truncateAddress } from "~/lib/utils";
 import { base } from "wagmi/chains";
 
 export default function Demo(

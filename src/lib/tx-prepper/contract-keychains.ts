@@ -1,4 +1,4 @@
-import { Keychain } from "./legoTypes";
+import { Keychain } from "./prepper-types";
 
 export const CONTRACT_KEYCHAINS: Record<string, Keychain> = {
   V3_FACTORY_ADV_TOKEN: {

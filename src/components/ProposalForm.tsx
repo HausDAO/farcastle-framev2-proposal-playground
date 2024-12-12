@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, ChangeEventHandler, useCallback } from "react";
-import sdk, { FrameContext } from "@farcaster/frame-sdk";
+import { useEffect, useState, useCallback } from "react";
+import sdk from "@farcaster/frame-sdk";
 import {
   useAccount,
   useWaitForTransactionReceipt,
@@ -15,10 +15,12 @@ import { fromHex } from "viem";
 import { config } from "~/components/providers/WagmiProvider";
 import { Button } from "~/components/ui/Button";
 import { truncateAddress } from "~/lib/utils";
-import { Textarea } from "./ui/textarea";
 import { prepareTX } from "~/lib/tx-prepper/tx-prepper";
 import { TX } from "~/lib/tx-prepper/tx";
 import { DAO_ID, DAO_CHAIN, DAO_SAFE, DAO_CHAIN_ID } from "~/lib/dao-constants";
+import { useParams } from "next/navigation";
+import { FORM_CONFIGS, FormConfig, FormValues } from "~/lib/form-configs";
+import { SignalShares } from "./forms/SignalShares";
 // @ts-expect-error find type
 const getPropidFromReceipt = (receipt): number | null => {
   if (!receipt || !receipt.logs[0].topics[1]) return null;
@@ -26,24 +28,24 @@ const getPropidFromReceipt = (receipt): number | null => {
   return fromHex(receipt.logs[0].topics[1], "number");
 };
 
-export default function Whisper(
-  { title }: { title?: string } = { title: "Frames v2 Demo" }
-) {
+// get prop type from param
+// get config for that
+// // submit button text, form component, tx
+
+export default function ProposalForm() {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
-  const [secret, setSecret] = useState<string | null>(null);
   const [propid, setPropid] = useState<number | null>(null);
-  const [context, setContext] = useState<FrameContext>();
+  const [formConfig, setFormConfig] = useState<FormConfig | null>(null);
+  const [formValues, setFormValues] = useState<FormValues>({});
 
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
 
   const validChain = chainId === DAO_CHAIN_ID;
 
-  const handleTextInput = (event: ChangeEventHandler<HTMLTextAreaElement>) => {
-    // @ts-expect-error change event type
-    setSecret(event.target.value);
-  };
+  const params = useParams<{ proposalconfigid: string }>();
 
+  console.log("params", params);
   const {
     writeContract,
     data: hash,
@@ -64,8 +66,14 @@ export default function Whisper(
   const { connect } = useConnect();
 
   useEffect(() => {
+    // todo: valdiate id
+    if (params.proposalconfigid) {
+      setFormConfig(FORM_CONFIGS[params.proposalconfigid]);
+    }
+  }, [params]);
+
+  useEffect(() => {
     const load = async () => {
-      setContext(await sdk.context);
       sdk.actions.ready();
     };
     if (sdk && !isSDKLoaded) {
@@ -92,11 +100,12 @@ export default function Whisper(
   const handleSend = async () => {
     const wholeState = {
       formValues: {
-        title: "The Fly Hears...",
-        description: secret,
-        link: "",
+        ...formValues,
         recipient: address,
         sharesRequested: "1000000000000000000",
+        title: "Proposal Title",
+        description: "Proposal Description",
+        link: "Proposal Link",
       },
       chainId: DAO_CHAIN,
       safeId: DAO_SAFE,
@@ -133,38 +142,23 @@ export default function Whisper(
     return <div>Loading...</div>;
   }
 
-  const hasSecret = secret && secret.length > 5;
+  console.log("formConfig", formConfig);
+
+  if (!formConfig) return null;
+
+  // better validation on fields
   const disableSubmit =
-    !isConnected ||
-    isSendTxPending ||
-    !validChain ||
-    !hasSecret ||
-    isConfirming ||
-    !!hash;
+    !isConnected || isSendTxPending || !validChain || isConfirming || !!hash;
 
   return (
-    <div className="w-full fly-bg min-h-[695px]">
+    <div className="w-full min-h-[695px]">
       <div className="w-[300px] mx-auto py-4 px-2bg">
-        <h1 className="text-2xl font-bold text-center mb-4">{title}</h1>
         <div className="flex flex-col justify-between">
           <div>
-            {!isConfirmed && (
-              <div className="my-3">
-                <Textarea
-                  placeholder={`Whisper your secrets to me ${
-                    context?.user.displayName || "..."
-                  }`}
-                  className="h-96"
-                  // @ts-expect-error change event type
-                  onChange={handleTextInput}
-                />
-              </div>
-            )}
-            {isConfirmed && (
-              <div className="text-darkPurple text-[100px] font-bold w-full text-center bg-raisinBlack py-2 h-96">
-                <p className="pt-9">I hear you</p>
-              </div>
-            )}
+            <SignalShares
+              isConfirmed={isConfirmed}
+              setFormValues={setFormValues}
+            />
             {isConnected && !isConfirmed && (
               <>
                 <div className="mb-4">
@@ -173,7 +167,7 @@ export default function Whisper(
                     disabled={disableSubmit}
                     isLoading={isSendTxPending || isConfirming}
                   >
-                    Send it into the cracks of the castle wall
+                    {formConfig.submitButtonText || "Submit"}
                   </Button>
                   {isSendTxError && renderError(sendTxError)}
                 </div>

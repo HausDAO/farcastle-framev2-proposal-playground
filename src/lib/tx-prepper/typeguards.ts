@@ -1,5 +1,10 @@
 import { isAddress } from "viem";
-import { ArgType, EthAddress } from "./legoTypes";
+import {
+  ArgType,
+  EthAddress,
+  StringSearch,
+  ValidArgType,
+} from "./prepper-types";
 
 // TS user-defined typeguards
 export const isArray = (item: unknown): item is unknown[] =>
@@ -41,3 +46,13 @@ export const isNumberString = (item: unknown) =>
   isString(item) && !isNaN(parseFloat(item)) && isFinite(Number(item));
 export const isLengthOf = (item: unknown, length: number) =>
   isArray(item) && item.length === length;
+
+export const isSearchArg = (arg: ValidArgType): arg is StringSearch => {
+  return typeof arg === "string" && arg[0] === ".";
+};
+export const checkArgType = (arg: unknown) => {
+  if (isArgType(arg)) {
+    return arg;
+  }
+  throw new Error(`Invalid arg type ${arg}`);
+};
