@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { ImageResponse } from "next/og";
 
 export const alt = "Farcastle Proposals Whisper";
@@ -11,8 +12,13 @@ export const contentType = "image/png";
 export default async function Image() {
   return new ImageResponse(
     (
-      <div tw="h-full w-full flex flex-col justify-center items-center relative bg-white">
-        <h1 tw="text-6xl">Farcastle Proposals Whisper</h1>
+      <div tw="h-full w-full flex flex-col justify-center items-center relative bg-raisinBlack">
+        <h1 tw="text-xl text-darkPurple">Farcastle Whispers</h1>
+        <img
+          src="https://daohaus.mypinata.cloud/ipfs/QmeE6APDGW53dtvae8Z8wQVXbQiFYUwGUXiWDcX1AV2GdH"
+          width="200px"
+          alt="the fly"
+        />
       </div>
     ),
     {
