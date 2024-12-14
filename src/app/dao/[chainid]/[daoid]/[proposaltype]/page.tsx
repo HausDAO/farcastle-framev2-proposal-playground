@@ -3,24 +3,31 @@ import Proposal from "./proposal";
 
 const appUrl = process.env.NEXT_PUBLIC_URL;
 
-const frame = {
-  version: "next",
-  imageUrl: `${appUrl}/opengraph-image`,
-  button: {
-    title: "Launch",
-    action: {
-      type: "launch_frame",
-      name: "Farcastle Proposal",
-      url: appUrl,
-      splashImageUrl: `${appUrl}/splash.png`,
-      splashBackgroundColor: "#17151F",
-    },
-  },
-};
-
 export const revalidate = 300;
 
-export async function generateMetadata(): Promise<Metadata> {
+type Props = {
+  params: Promise<{ chainid: string; daoid: string; proposaltype: string }>;
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  console.log("appUrl", appUrl);
+
+  const { chainid, daoid, proposaltype } = await params;
+
+  const frame = {
+    version: "next",
+    imageUrl: `${appUrl}/opengraph-image`,
+    button: {
+      title: "Launch",
+      action: {
+        type: "launch_frame",
+        name: "Farcastle DAO Proposals",
+        url: `${appUrl}/dao/${chainid}/${daoid}/${proposaltype}`,
+        splashImageUrl: `${appUrl}/splash.png`,
+        splashBackgroundColor: "#17151F",
+      },
+    },
+  };
   return {
     title: "Farcastle Proposal",
     openGraph: {
