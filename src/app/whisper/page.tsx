@@ -3,17 +3,16 @@ import Whisper from "./whisper";
 
 const appUrl = process.env.NEXT_PUBLIC_URL;
 
-// TODO: can we change this url to open a deeplink?
 const frame = {
   version: "next",
-  imageUrl: `${appUrl}/opengraph-image`,
+  imageUrl: `${appUrl}/whisper/opengraph-image`,
   button: {
-    title: "Launch",
+    title: "Whisper",
     action: {
       type: "launch_frame",
       name: "Farcastle Whispers",
       url: `${appUrl}/whisper`,
-      splashImageUrl: `${appUrl}/splash.png`,
+      splashImageUrl: `${appUrl}/fly.png`,
       splashBackgroundColor: "#17151F",
     },
   },
