@@ -1,10 +1,9 @@
 import { Metadata } from "next";
-// import App from "./app";
-
-import Whispers from "../../components/Whisper";
+import Whisper from "./whisper";
 
 const appUrl = process.env.NEXT_PUBLIC_URL;
 
+// TODO: can we change this url to open a deeplink?
 const frame = {
   version: "next",
   imageUrl: `${appUrl}/opengraph-image`,
@@ -13,7 +12,7 @@ const frame = {
     action: {
       type: "launch_frame",
       name: "Farcastle Whispers",
-      url: appUrl,
+      url: `${appUrl}/whisper,`,
       splashImageUrl: `${appUrl}/splash.png`,
       splashBackgroundColor: "#17151F",
     },
@@ -35,6 +34,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function Whisper() {
-  return <Whispers />;
+export default function WhisperPage() {
+  return <Whisper />;
 }

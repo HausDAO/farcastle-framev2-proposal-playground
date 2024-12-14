@@ -5,19 +5,18 @@ import sdk from "@farcaster/frame-sdk";
 import {
   useAccount,
   useWaitForTransactionReceipt,
-  useDisconnect,
   useConnect,
-  useChainId,
+  // useChainId,
   useWriteContract,
 } from "wagmi";
 
 import { fromHex } from "viem";
 import { config } from "~/components/providers/WagmiProvider";
 import { Button } from "~/components/ui/Button";
-import { truncateAddress } from "~/lib/utils";
+// import { truncateAddress } from "~/lib/utils";
 import { prepareTX } from "~/lib/tx-prepper/tx-prepper";
 import { TX } from "~/lib/tx-prepper/tx";
-import { DAO_ID, DAO_CHAIN, DAO_SAFE, DAO_CHAIN_ID } from "~/lib/dao-constants";
+import { DAO_ID, DAO_CHAIN, DAO_SAFE } from "~/lib/dao-constants";
 import { useParams } from "next/navigation";
 import { FORM_CONFIGS, FormConfig, FormValues } from "~/lib/form-configs";
 import { SignalShares } from "./forms/SignalShares";
@@ -39,11 +38,13 @@ export default function ProposalForm() {
   const [formValues, setFormValues] = useState<FormValues>({});
 
   const { address, isConnected } = useAccount();
-  const chainId = useChainId();
+  // const chainId = useChainId();
 
-  const validChain = chainId === DAO_CHAIN_ID;
+  // TODO: fix this
+  // const validChain = chainId === DAO_CHAIN_ID;
+  const validChain = true;
 
-  const params = useParams<{ proposalconfigid: string }>();
+  const params = useParams<{ proposaltype: string }>();
 
   console.log("params", params);
   const {
@@ -62,19 +63,18 @@ export default function ProposalForm() {
     hash: hash,
   });
 
-  const { disconnect } = useDisconnect();
   const { connect } = useConnect();
 
   useEffect(() => {
     // todo: valdiate id
-    if (params.proposalconfigid) {
-      setFormConfig(FORM_CONFIGS[params.proposalconfigid]);
+    if (params.proposaltype) {
+      setFormConfig(FORM_CONFIGS[params.proposaltype]);
     }
   }, [params]);
 
   useEffect(() => {
     const load = async () => {
-      sdk.actions.ready();
+      sdk.actions.ready({});
     };
     if (sdk && !isSDKLoaded) {
       setIsSDKLoaded(true);
@@ -173,6 +173,18 @@ export default function ProposalForm() {
                 </div>
               </>
             )}
+
+            {!isConnected && (
+              <>
+                <div className="mb-4">
+                  <Button
+                    onClick={() => connect({ connector: config.connectors[0] })}
+                  >
+                    Connect
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
 
           {propid && (
@@ -186,20 +198,6 @@ export default function ProposalForm() {
               <Button onClick={openUrl}>Block Explorer</Button>
             </div>
           )}
-
-          <div className="my-3">
-            <Button
-              onClick={() =>
-                isConnected
-                  ? disconnect()
-                  : connect({ connector: config.connectors[0] })
-              }
-            >
-              {isConnected && address
-                ? `Disconnect ${truncateAddress(address)}`
-                : "Connect"}
-            </Button>
-          </div>
         </div>
       </div>
     </div>

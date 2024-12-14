@@ -4,12 +4,10 @@ import { useEffect, useState } from "react";
 import sdk from "@farcaster/frame-sdk";
 import Link from "next/link";
 import { Button } from "./ui/Button";
-import { useParams } from "next/navigation";
+import { DAO_CHAIN, DAO_ID } from "~/lib/dao-constants";
 
-export default function ProposalList() {
+export default function Home() {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
-
-  const params = useParams<{ chainid: string; daoid: string }>();
 
   useEffect(() => {
     const load = async () => {
@@ -30,17 +28,9 @@ export default function ProposalList() {
       <h1 className="text-2xl font-bold text-center my-4">Proposal Types</h1>
 
       <div className="mb-4">
-        <Link href={`/dao/${params.chainid}/${params.daoid}/POST_SIGNAL`}>
-          <Button>Propose Signal</Button>
+        <Link href={`/dao/${DAO_CHAIN}/${DAO_ID}`}>
+          <Button>find a dao</Button>
         </Link>
-      </div>
-
-      <div className="mb-4">
-        <Button disabled={true}>Request Funding</Button>
-      </div>
-
-      <div className="mb-4">
-        <Button disabled={true}>Request Membership</Button>
       </div>
     </div>
   );
