@@ -5,7 +5,6 @@ import sdk, { FrameContext } from "@farcaster/frame-sdk";
 import {
   useAccount,
   useWaitForTransactionReceipt,
-  useDisconnect,
   useConnect,
   useChainId,
   useWriteContract,
@@ -14,7 +13,6 @@ import {
 import { fromHex } from "viem";
 import { config } from "~/components/providers/WagmiProvider";
 import { Button } from "~/components/ui/Button";
-import { truncateAddress } from "~/lib/utils";
 import { Textarea } from "./ui/textarea";
 import { prepareTX } from "~/lib/tx-prepper/tx-prepper";
 import { TX } from "~/lib/tx-prepper/tx";
@@ -60,7 +58,6 @@ export default function WhisperForm(
     hash: hash,
   });
 
-  const { disconnect } = useDisconnect();
   const { connect } = useConnect();
 
   useEffect(() => {
