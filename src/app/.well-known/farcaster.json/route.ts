@@ -4,14 +4,14 @@ export async function GET() {
   const config = {
     accountAssociation: {
       header:
-        "eyJmaWQiOjM2MjEsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHgyY2Q4NWEwOTMyNjFmNTkyNzA4MDRBNkVBNjk3Q2VBNENlQkVjYWZFIn0",
-      payload: "eyJkb21haW4iOiJmcmFtZXMtdjIudmVyY2VsLmFwcCJ9",
+        "eyJmaWQiOjE0ODYyLCJ0eXBlIjoiY3VzdG9keSIsImtleSI6IjB4Yzg5MTM2MDhBZDdDZDJGODAyMjlmNGNGQjNFMTU4MjU0ODFGZDM5MyJ9",
+      payload: "eyJkb21haW4iOiJwcm9wb3NhbHMuZGFvaGF1cy5jbHViIn0",
       signature:
-        "MHhiNDIwMzQ1MGZkNzgzYTExZjRiOTllZTFlYjA3NmMwOTdjM2JkOTY1NGM2ODZjYjkyZTAyMzk2Y2Q0YjU2MWY1MjY5NjI5ZGQ5NTliYjU0YzEwOGI4OGVmNjdjMTVlZTdjZDc2YTRiMGU5NzkzNzA3YzkxYzFkOWFjNTg0YmQzNjFi",
+        "MHhiYzk5N2FkZjIxMTYyMTBjNDA4ZWEyMmYwYzExMTNjZmM4NmU0ZGFjZTI0NmU4OTBkNGQ5MmFhOTdiNWY5ZjU4NjFlZGYwMjdjNmVjMjU5MWU5YjIwZjA2NGYxMmQ3ZDMxNjYwM2JlNzY1MGYzMTcwNTAwNGY4YjYyODU4NDZkZjFi",
     },
     frame: {
       version: "0.0.0",
-      name: "Frames v2 Demo",
+      name: "Farcastle Proposals",
       iconUrl: `${appUrl}/icon.png`,
       splashImageUrl: `${appUrl}/splash.png`,
       splashBackgroundColor: "#f7f7f7",

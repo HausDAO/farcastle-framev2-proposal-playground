@@ -26,7 +26,7 @@ const getPropidFromReceipt = (receipt): number | null => {
   return fromHex(receipt.logs[0].topics[1], "number");
 };
 
-export default function Whisper(
+export default function WhisperForm(
   { title }: { title?: string } = { title: "Frames v2 Demo" }
 ) {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
@@ -66,7 +66,7 @@ export default function Whisper(
   useEffect(() => {
     const load = async () => {
       setContext(await sdk.context);
-      sdk.actions.ready();
+      sdk.actions.ready({});
     };
     if (sdk && !isSDKLoaded) {
       setIsSDKLoaded(true);
@@ -179,6 +179,18 @@ export default function Whisper(
                 </div>
               </>
             )}
+
+            {!isConnected && (
+              <>
+                <div className="mb-4">
+                  <Button
+                    onClick={() => connect({ connector: config.connectors[0] })}
+                  >
+                    Connect
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
 
           {propid && (
@@ -192,20 +204,6 @@ export default function Whisper(
               <Button onClick={openUrl}>Block Explorer</Button>
             </div>
           )}
-
-          <div className="my-3">
-            <Button
-              onClick={() =>
-                isConnected
-                  ? disconnect()
-                  : connect({ connector: config.connectors[0] })
-              }
-            >
-              {isConnected && address
-                ? `Disconnect ${truncateAddress(address)}`
-                : "Connect"}
-            </Button>
-          </div>
         </div>
       </div>
     </div>

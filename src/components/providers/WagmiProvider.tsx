@@ -1,5 +1,5 @@
 import { createConfig, http, WagmiProvider } from "wagmi";
-import { base, sepolia } from "wagmi/chains";
+import { sepolia } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // import { frameConnector } from "~/lib/connector";

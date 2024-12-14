@@ -4,8 +4,8 @@ import "~/app/globals.css";
 import { Providers } from "~/app/providers";
 
 export const metadata: Metadata = {
-  title: "The Fly",
-  description: "Something skittering behind the stone...",
+  title: "demo",
+  description: "demo in layout.tsx",
 };
 
 export default function RootLayout({
