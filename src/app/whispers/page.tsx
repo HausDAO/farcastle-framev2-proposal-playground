@@ -5,7 +5,7 @@ const appUrl = process.env.NEXT_PUBLIC_URL;
 
 const frame = {
   version: "next",
-  imageUrl: `${appUrl}/whisper/opengraph-image`,
+  imageUrl: `${appUrl}/whispers/opengraph-image`,
   button: {
     title: "Whisper",
     action: {
