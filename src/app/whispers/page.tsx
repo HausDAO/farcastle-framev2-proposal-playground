@@ -11,7 +11,7 @@ const frame = {
     action: {
       type: "launch_frame",
       name: "Farcastle Whispers",
-      url: `${appUrl}/whisper`,
+      url: `${appUrl}/whispers`,
       splashImageUrl: `${appUrl}/fly.png`,
       splashBackgroundColor: "#17151F",
     },
