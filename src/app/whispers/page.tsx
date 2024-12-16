@@ -7,7 +7,7 @@ const frame = {
   version: "next",
   imageUrl: `${appUrl}/whispers/opengraph-image`,
   button: {
-    title: "Whisper",
+    title: "Whispers",
     action: {
       type: "launch_frame",
       name: "Farcastle Whispers",
@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: "Farcastle Whispers",
     openGraph: {
       title: "Farcastle Whispers",
-      description: "The Fly Hears",
+      description: "The Fly Listens",
     },
     other: {
       "fc:frame": JSON.stringify(frame),

@@ -5,16 +5,16 @@ export async function GET() {
     accountAssociation: {
       header:
         "eyJmaWQiOjE0ODYyLCJ0eXBlIjoiY3VzdG9keSIsImtleSI6IjB4Yzg5MTM2MDhBZDdDZDJGODAyMjlmNGNGQjNFMTU4MjU0ODFGZDM5MyJ9",
-      payload: "eyJkb21haW4iOiJwcm9wb3NhbHMuZGFvaGF1cy5jbHViIn0",
+      payload: "eyJkb21haW4iOiJ3aGlzcGVycy5kYW9oYXVzLmNsdWIifQ",
       signature:
-        "MHhiYzk5N2FkZjIxMTYyMTBjNDA4ZWEyMmYwYzExMTNjZmM4NmU0ZGFjZTI0NmU4OTBkNGQ5MmFhOTdiNWY5ZjU4NjFlZGYwMjdjNmVjMjU5MWU5YjIwZjA2NGYxMmQ3ZDMxNjYwM2JlNzY1MGYzMTcwNTAwNGY4YjYyODU4NDZkZjFi",
+        "MHg4MDNjZDhkZGExNjMzYjI3MmVmZjY5YzAwZGNiMTVjYjVhNTAyMDEwODY1N2QwMDQ3OTVlMDNmM2ZkMzZiZjkwNDgyNGE2MmJmZDU5N2QyMzI2NzAxZDdlYjdhMjZjNTA3MmRmODRjN2QzM2RlOTlhMWE0NTRlMTAwN2E3NjQ1NzFj",
     },
     frame: {
-      version: "0.0.0",
-      name: "Farcastle Proposals",
+      version: "0.0.1",
+      name: "Farcastle Whispers",
       iconUrl: `${appUrl}/icon.png`,
       splashImageUrl: `${appUrl}/splash.png`,
-      splashBackgroundColor: "#f7f7f7",
+      splashBackgroundColor: "#17151F",
       homeUrl: appUrl,
     },
   };

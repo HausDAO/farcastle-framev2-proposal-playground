@@ -16,7 +16,14 @@ import { Button } from "~/components/ui/Button";
 import { Textarea } from "./ui/textarea";
 import { prepareTX } from "~/lib/tx-prepper/tx-prepper";
 import { TX } from "~/lib/tx-prepper/tx";
-import { DAO_ID, DAO_CHAIN, DAO_SAFE, DAO_CHAIN_ID } from "~/lib/dao-constants";
+import {
+  DAO_ID,
+  DAO_CHAIN,
+  DAO_SAFE,
+  DAO_CHAIN_ID,
+  EXPLORER_URL,
+} from "~/lib/dao-constants";
+import { ValidNetwork } from "~/lib/tx-prepper/prepper-types";
 // @ts-expect-error find type
 const getPropidFromReceipt = (receipt): number | null => {
   if (!receipt || !receipt.logs[0].topics[1]) return null;
@@ -24,9 +31,7 @@ const getPropidFromReceipt = (receipt): number | null => {
   return fromHex(receipt.logs[0].topics[1], "number");
 };
 
-export default function WhisperForm(
-  { title }: { title?: string } = { title: "Frames v2 Demo" }
-) {
+export default function WhisperForm() {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
   const [secret, setSecret] = useState<string | null>(null);
   const [propid, setPropid] = useState<number | null>(null);
@@ -73,17 +78,19 @@ export default function WhisperForm(
 
   useEffect(() => {
     if (!receiptData || !receiptData.logs[0].topics[1]) return;
+    console.log("receiptData", receiptData);
     setPropid(getPropidFromReceipt(receiptData));
   }, [receiptData]);
 
   const openProposalCastUrl = useCallback(() => {
+    console.log("cast url propid", propid);
     sdk.actions.openUrl(
       `https://warpcast.com/~/compose?text=&embeds[]=https://frames.farcastle.net/molochv3/${DAO_CHAIN}/${DAO_ID}/proposals/${propid}`
     );
   }, [propid]);
 
   const openUrl = useCallback(() => {
-    sdk.actions.openUrl(`https://basescan.org/tx/${hash}`);
+    sdk.actions.openUrl(`${EXPLORER_URL}/tx/${hash}`);
   }, [hash]);
 
   const handleSend = async () => {
@@ -103,7 +110,7 @@ export default function WhisperForm(
 
     const txPrep = await prepareTX({
       tx: TX.SIGNAL_SHARES,
-      chainId: DAO_CHAIN,
+      chainId: DAO_CHAIN as ValidNetwork,
       safeId: DAO_SAFE,
       appState: wholeState,
       argCallbackRecord: {},
@@ -142,13 +149,12 @@ export default function WhisperForm(
   return (
     <div className="w-full fly-bg min-h-[695px]">
       <div className="w-[300px] mx-auto py-4 px-2bg">
-        <h1 className="text-2xl font-bold text-center mb-4">{title}</h1>
         <div className="flex flex-col justify-between">
           <div>
             {!isConfirmed && (
               <div className="my-3">
                 <Textarea
-                  placeholder={`Whisper your secrets to me ${
+                  placeholder={`Tell me a secret ${
                     context?.user.displayName || "..."
                   }`}
                   className="h-96"
@@ -158,7 +164,7 @@ export default function WhisperForm(
               </div>
             )}
             {isConfirmed && (
-              <div className="text-darkPurple text-[100px] font-bold w-full text-center bg-raisinBlack py-2 h-96">
+              <div className="text-darkPurple text-[80px] font-bold w-full text-center bg-raisinBlack py-2 h-96">
                 <p className="pt-9">I hear you</p>
               </div>
             )}
@@ -170,7 +176,7 @@ export default function WhisperForm(
                     disabled={disableSubmit}
                     isLoading={isSendTxPending || isConfirming}
                   >
-                    Send it into the cracks of the castle wall
+                    Whisper into the cracks of the castle wall
                   </Button>
                   {isSendTxError && renderError(sendTxError)}
                 </div>
@@ -192,13 +198,18 @@ export default function WhisperForm(
 
           {propid && (
             <div className="my-2">
-              <Button onClick={openProposalCastUrl}>Cast</Button>
+              <Button onClick={openProposalCastUrl}>Cast It</Button>
             </div>
           )}
 
           {hash && (
             <div className="my-2">
-              <Button onClick={openUrl}>Block Explorer</Button>
+              <p
+                className="w-full text-center font-bold text-raisinBlack hover:text-rasedaGreen hover:cursor-pointer"
+                onClick={openUrl}
+              >
+                View on block explorer
+              </p>
             </div>
           )}
         </div>
