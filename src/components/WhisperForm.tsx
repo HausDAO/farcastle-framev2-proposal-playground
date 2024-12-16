@@ -8,6 +8,7 @@ import {
   useConnect,
   useChainId,
   useWriteContract,
+  useSwitchChain,
 } from "wagmi";
 
 import { fromHex } from "viem";
@@ -22,6 +23,7 @@ import {
   DAO_SAFE,
   DAO_CHAIN_ID,
   EXPLORER_URL,
+  WAGMI_CHAIN_OBJ,
 } from "~/lib/dao-constants";
 import { ValidNetwork } from "~/lib/tx-prepper/prepper-types";
 // @ts-expect-error find type
@@ -39,6 +41,7 @@ export default function WhisperForm() {
 
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
+  const { switchChain } = useSwitchChain();
 
   const validChain = chainId === DAO_CHAIN_ID;
 
@@ -137,6 +140,8 @@ export default function WhisperForm() {
     return <div>Loading...</div>;
   }
 
+  console.log("validChain", validChain);
+
   const hasSecret = secret && secret.length > 5;
   const disableSubmit =
     !isConnected ||
@@ -193,6 +198,14 @@ export default function WhisperForm() {
                   </Button>
                 </div>
               </>
+            )}
+
+            {isConnected && !validChain && (
+              <Button
+                onClick={() => switchChain({ chainId: WAGMI_CHAIN_OBJ.id })}
+              >
+                Switch to Base
+              </Button>
             )}
           </div>
 
