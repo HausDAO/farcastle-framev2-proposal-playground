@@ -20,6 +20,7 @@ import { DAO_ID, DAO_CHAIN, DAO_SAFE } from "~/lib/dao-constants";
 import { useParams } from "next/navigation";
 import { FORM_CONFIGS, FormConfig, FormValues } from "~/lib/form-configs";
 import { SignalShares } from "./forms/SignalShares";
+import { ValidNetwork } from "~/lib/tx-prepper/prepper-types";
 // @ts-expect-error find type
 const getPropidFromReceipt = (receipt): number | null => {
   if (!receipt || !receipt.logs[0].topics[1]) return null;
@@ -115,7 +116,7 @@ export default function ProposalForm() {
 
     const txPrep = await prepareTX({
       tx: TX.SIGNAL_SHARES,
-      chainId: DAO_CHAIN,
+      chainId: DAO_CHAIN as ValidNetwork,
       safeId: DAO_SAFE,
       appState: wholeState,
       argCallbackRecord: {},
