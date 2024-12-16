@@ -25,7 +25,9 @@ export default function Home() {
 
   return (
     <div className="w-[300px] mx-auto py-4 px-2">
-      <h1 className="text-2xl font-bold text-center my-4">Proposal Types</h1>
+      <h1 className="text-2xl font-bold text-center my-4 text-aliceBlue">
+        Proposal Types
+      </h1>
 
       <div className="mb-4">
         <Link href={`/dao/${DAO_CHAIN}/${DAO_ID}`}>
