@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { ImageResponse } from "next/og";
 
-export const alt = "Farcastle Proposals Whisper";
+export const alt = "Farcastle Whispers";
 export const size = {
   width: 600,
   height: 400,

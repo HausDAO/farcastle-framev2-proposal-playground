@@ -3,7 +3,7 @@ import { sepolia } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { frameConnector } from "~/lib/connector";
-// import { injected } from "wagmi/connectors";
+import { injected } from "wagmi/connectors";
 
 // console.log("sdk", sdk.context);
 
@@ -15,8 +15,8 @@ export const config = createConfig({
     // [base.id]: http(),
     [sepolia.id]: http(),
   },
-  connectors: [frameConnector()],
-  // connectors: [injected()],
+  // connectors: [frameConnector()],
+  connectors: [injected()],
 });
 
 const queryClient = new QueryClient();

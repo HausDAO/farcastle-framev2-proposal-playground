@@ -1,4 +1,16 @@
-# 🖼️ frames-v2-demo
+## Farcastle Proposals Playground
+
+```bash
+$ bun install
+```
+
+To run the app:
+
+```bash
+$ bun dev
+```
+
+## 🖼️ frames-v2-demo
 
 A Farcaster Frames v2 demo app.
 
@@ -731,7 +743,6 @@ export default function Demo() {
   );
 }
 ```
-
 
 Now let's request a transaction. We'll use the Wagmi `useSendTransaction` hook to call the Yoink contract and `useWaitForTransactionReceipt` to watch its status.
 
