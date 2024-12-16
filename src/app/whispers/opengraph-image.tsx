@@ -12,7 +12,7 @@ export const contentType = "image/png";
 export default async function Image() {
   return new ImageResponse(
     (
-      <div tw="h-full w-full flex flex-col justify-center items-center relative bg-raisinBlack">
+      <div tw="h-full w-full flex flex-col justify-center items-center relative text-[#00B1CC] bg-[#341A34]">
         <img
           src="https://daohaus.mypinata.cloud/ipfs/QmeE6APDGW53dtvae8Z8wQVXbQiFYUwGUXiWDcX1AV2GdH"
           width="600px"
