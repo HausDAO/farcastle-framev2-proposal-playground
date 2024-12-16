@@ -1,3 +1,14 @@
+import {
+  base,
+  sepolia,
+  mainnet,
+  polygon,
+  gnosis,
+  optimism,
+  arbitrum,
+  Chain,
+} from "wagmi/chains";
+
 type DaoConfigList = Record<string, DaoCOnfig>;
 
 type DaoCOnfig = {
@@ -44,5 +55,19 @@ const EXPLORER_URLS: Record<string, string> = {
 };
 export const EXPLORER_URL =
   EXPLORER_URLS[
+    DAO_CONFIG[process.env.NEXT_DAO_ID || DEFAULT_DAO_ID]?.DAO_CHAIN
+  ];
+
+const WAGMI_CHAIN_OBJS: Record<string, Chain> = {
+  "0x1": mainnet,
+  "0x64": gnosis,
+  "0x89": polygon,
+  "0xa": optimism,
+  "0xa4b1": arbitrum,
+  "0xaa36a7": sepolia,
+  "0x2105": base,
+};
+export const WAGMI_CHAIN_OBJ =
+  WAGMI_CHAIN_OBJS[
     DAO_CONFIG[process.env.NEXT_DAO_ID || DEFAULT_DAO_ID]?.DAO_CHAIN
   ];
