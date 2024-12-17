@@ -79,7 +79,7 @@ export default function WhisperForm() {
 
   const openUrl = useCallback(() => {
     sdk.actions.openUrl(`${getExplorerUrl(daochain)}/tx/${hash}`);
-  }, [hash]);
+  }, [hash, daochain]);
 
   const handleSend = async () => {
     const wholeState = {

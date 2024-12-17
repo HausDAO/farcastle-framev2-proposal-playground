@@ -19,7 +19,6 @@ export const RequestMembership = ({
   const handleTextInput = (
     event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
-    console.log("event.target", event.target.id);
     const value = event.target.value as string;
     // @ts-expect-error todo fix some type issues
     setFormValues((prevValues: FormValues) => {

@@ -197,7 +197,7 @@ export default function ProposalForm() {
                 switchChain({ chainId: getWagmiChainObj(daochain).id })
               }
             >
-              Switch to Base
+              Switch Chain
             </Button>
           )}
 

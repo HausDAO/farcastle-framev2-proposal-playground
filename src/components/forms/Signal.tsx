@@ -19,7 +19,6 @@ export const Signal = ({
   const handleTextInput = (
     event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
-    console.log("event.target", event.target.id);
     const value = event.target.value as string;
     // @ts-expect-error todo fix some type issues
     setFormValues((prevValues: FormValues) => {
@@ -28,7 +27,6 @@ export const Signal = ({
   };
 
   useEffect(() => {
-    console.log("formValues", formValues);
     const hasDescription = formValues.description?.length > 5;
     const hasTitle = formValues.title?.length > 5;
 
