@@ -4,20 +4,23 @@ import { TXLego } from "./tx-prepper/prepper-types";
 
 export type FormConfig = {
   submitButtonText?: string;
+  id: string;
   tx: TXLego;
-  //   formComponent: JSX.Element;
 };
 
 export type FormValues = Record<string, string>;
 
 export const FORM_CONFIGS: Record<string, FormConfig> = {
   POST_SIGNAL: {
+    id: "POST_SIGNAL",
     tx: TX.POST_SIGNAL,
-    // formComponent: SignalShares,
   },
-  SIGNAL_SHARES: {
-    submitButtonText: "Send it into the cracks of the castle wall",
-    tx: TX.POST_SIGNAL,
-    // formComponent: SignalShares,
+  REQUEST_MEMBERSHIP: {
+    id: "REQUEST_MEMBERSHIP",
+    tx: TX.REQUEST_MEMBERSHIP,
   },
+};
+
+export const validFormId = (id: string): boolean => {
+  return Object.keys(FORM_CONFIGS).includes(id);
 };

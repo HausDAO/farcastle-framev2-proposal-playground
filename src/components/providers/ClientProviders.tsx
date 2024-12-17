@@ -3,7 +3,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import farcasterFrame from "@farcaster/frame-wagmi-connector";
 import { WAGMI_CHAIN_OBJ } from "~/lib/dao-constants";
 
-// import { injected } from "wagmi/connectors";
+import { injected } from "wagmi/connectors";
+import { FrameSDKProvider } from "./FramesSDKProvider";
 
 // console.log("sdk", sdk.context);
 
@@ -15,16 +16,22 @@ export const config = createConfig({
     // [base.id]: http(),
     [WAGMI_CHAIN_OBJ.id]: http(),
   },
-  connectors: [farcasterFrame()],
-  // connectors: [injected()],
+  // connectors: [farcasterFrame()],
+  connectors: [injected()],
 });
 
 const queryClient = new QueryClient();
 
-export default function Provider({ children }: { children: React.ReactNode }) {
+export default function ClientProviders({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <FrameSDKProvider>{children}</FrameSDKProvider>
+      </QueryClientProvider>
     </WagmiProvider>
   );
 }
