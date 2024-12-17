@@ -16,14 +16,7 @@ import { fromHex } from "viem";
 import { Button } from "~/components/ui/button";
 // import { truncateAddress } from "~/lib/utils";
 import { prepareTX } from "~/lib/tx-prepper/tx-prepper";
-import {
-  DAO_ID,
-  DAO_CHAIN,
-  DAO_SAFE,
-  EXPLORER_URL,
-  DAO_CHAIN_ID,
-  WAGMI_CHAIN_OBJ,
-} from "~/lib/dao-constants";
+import { getExplorerUrl, getWagmiChainObj } from "~/lib/dao-constants";
 import { useParams } from "next/navigation";
 import {
   FORM_CONFIGS,
@@ -34,9 +27,8 @@ import {
 import { ValidNetwork } from "~/lib/tx-prepper/prepper-types";
 import { useFrameSDK } from "./providers/FramesSDKProvider";
 import { config } from "./providers/ClientProviders";
-import { Signal } from "./forms/Signal";
-import { RequestMembership } from "./forms/RequestMembership";
 import { FormSwitcher } from "./forms/FormSwitcher";
+import { useDaoRecord } from "./providers/DaoRecordProvider";
 
 // @ts-expect-error find type
 const getPropidFromReceipt = (receipt): number | null => {
@@ -48,6 +40,8 @@ const getPropidFromReceipt = (receipt): number | null => {
 export default function ProposalForm() {
   const { isLoaded } = useFrameSDK();
 
+  const { daoid, daochain, daosafe, daochainid } = useDaoRecord();
+
   const [propid, setPropid] = useState<number | null>(null);
   const [formConfig, setFormConfig] = useState<FormConfig | null>(null);
   const [formValues, setFormValues] = useState<FormValues>({});
@@ -57,11 +51,7 @@ export default function ProposalForm() {
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
 
-  const validChain = chainId === DAO_CHAIN_ID;
-
-  console.log("chainId", chainId);
-  console.log("DAO_CHAIN_ID", DAO_CHAIN_ID);
-  console.log("validChain", validChain);
+  const validChain = chainId === daochainid;
 
   const params = useParams<{ proposaltype: string }>();
 
@@ -96,13 +86,13 @@ export default function ProposalForm() {
 
   const openProposalCastUrl = useCallback(() => {
     sdk.actions.openUrl(
-      `https://warpcast.com/~/compose?text=&embeds[]=https://frames.farcastle.net/molochv3/${DAO_CHAIN}/${DAO_ID}/proposals/${propid}`
+      `https://warpcast.com/~/compose?text=&embeds[]=https://frames.farcastle.net/molochv3/${daochain}/${daoid}/proposals/${propid}`
     );
-  }, [propid]);
+  }, [propid, daoid, daochain]);
 
   const openUrl = useCallback(() => {
-    sdk.actions.openUrl(`${EXPLORER_URL}/tx/${hash}`);
-  }, [hash]);
+    sdk.actions.openUrl(`${getExplorerUrl(daochain)}/tx/${hash}`);
+  }, [hash, daochain]);
 
   const handleSend = async () => {
     console.log("formValues", formValues);
@@ -114,16 +104,16 @@ export default function ProposalForm() {
         ...formValues,
         recipient: address,
       },
-      chainId: DAO_CHAIN,
-      safeId: DAO_SAFE,
-      daoId: DAO_ID,
+      chainId: daochain,
+      safeId: daosafe,
+      daoId: daoid,
       localABIs: {},
     };
 
     const txPrep = await prepareTX({
       tx: formConfig.tx,
-      chainId: DAO_CHAIN as ValidNetwork,
-      safeId: DAO_SAFE,
+      chainId: daochain as ValidNetwork,
+      safeId: daosafe,
       appState: wholeState,
       argCallbackRecord: {},
       localABIs: {},
@@ -203,7 +193,9 @@ export default function ProposalForm() {
 
           {isConnected && !validChain && (
             <Button
-              onClick={() => switchChain({ chainId: WAGMI_CHAIN_OBJ.id })}
+              onClick={() =>
+                switchChain({ chainId: getWagmiChainObj(daochain).id })
+              }
             >
               Switch to Base
             </Button>

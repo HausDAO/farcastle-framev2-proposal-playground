@@ -16,17 +16,11 @@ import { Button } from "~/components/ui/button";
 import { Textarea } from "./ui/textarea";
 import { prepareTX } from "~/lib/tx-prepper/tx-prepper";
 import { TX } from "~/lib/tx-prepper/tx";
-import {
-  DAO_ID,
-  DAO_CHAIN,
-  DAO_SAFE,
-  DAO_CHAIN_ID,
-  EXPLORER_URL,
-  WAGMI_CHAIN_OBJ,
-} from "~/lib/dao-constants";
+import { getExplorerUrl, getWagmiChainObj } from "~/lib/dao-constants";
 import { ValidNetwork } from "~/lib/tx-prepper/prepper-types";
 import { useFrameSDK } from "./providers/FramesSDKProvider";
 import { config } from "./providers/ClientProviders";
+import { useDaoRecord } from "./providers/DaoRecordProvider";
 // @ts-expect-error find type
 const getPropidFromReceipt = (receipt): number | null => {
   if (!receipt || !receipt.logs[0].topics[1]) return null;
@@ -36,6 +30,7 @@ const getPropidFromReceipt = (receipt): number | null => {
 
 export default function WhisperForm() {
   const { context, isLoaded } = useFrameSDK();
+  const { daoid, daochain, daosafe, daochainid } = useDaoRecord();
 
   const [secret, setSecret] = useState<string | null>(null);
   const [propid, setPropid] = useState<number | null>(null);
@@ -44,11 +39,7 @@ export default function WhisperForm() {
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
 
-  const validChain = chainId === DAO_CHAIN_ID;
-
-  console.log("chainId", chainId);
-  console.log("DAO_CHAIN_ID", DAO_CHAIN_ID);
-  console.log("validChain", validChain);
+  const validChain = chainId === daochainid;
 
   const handleTextInput = (event: ChangeEventHandler<HTMLTextAreaElement>) => {
     // @ts-expect-error change event type
@@ -82,12 +73,12 @@ export default function WhisperForm() {
   const openProposalCastUrl = useCallback(() => {
     console.log("cast url propid", propid);
     sdk.actions.openUrl(
-      `https://warpcast.com/~/compose?text=&embeds[]=https://frames.farcastle.net/molochv3/${DAO_CHAIN}/${DAO_ID}/proposals/${propid}`
+      `https://warpcast.com/~/compose?text=&embeds[]=https://frames.farcastle.net/molochv3/${daochain}/${daoid}/proposals/${propid}`
     );
-  }, [propid]);
+  }, [propid, daoid, daochain]);
 
   const openUrl = useCallback(() => {
-    sdk.actions.openUrl(`${EXPLORER_URL}/tx/${hash}`);
+    sdk.actions.openUrl(`${getExplorerUrl(daochain)}/tx/${hash}`);
   }, [hash]);
 
   const handleSend = async () => {
@@ -99,16 +90,16 @@ export default function WhisperForm() {
         recipient: address,
         sharesRequested: "1000000000000000000",
       },
-      chainId: DAO_CHAIN,
-      safeId: DAO_SAFE,
-      daoId: DAO_ID,
+      chainId: daochain,
+      safeId: daosafe,
+      daoId: daoid,
       localABIs: {},
     };
 
     const txPrep = await prepareTX({
       tx: TX.SIGNAL_SHARES,
-      chainId: DAO_CHAIN as ValidNetwork,
-      safeId: DAO_SAFE,
+      chainId: daochain as ValidNetwork,
+      safeId: daosafe,
       appState: wholeState,
       argCallbackRecord: {},
       localABIs: {},
@@ -194,7 +185,9 @@ export default function WhisperForm() {
 
             {isConnected && !validChain && (
               <Button
-                onClick={() => switchChain({ chainId: WAGMI_CHAIN_OBJ.id })}
+                onClick={() =>
+                  switchChain({ chainId: getWagmiChainObj(daochain).id })
+                }
               >
                 Switch Chain
               </Button>

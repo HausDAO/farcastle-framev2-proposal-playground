@@ -1,26 +1,45 @@
 import { createConfig, http, WagmiProvider } from "wagmi";
+import {
+  base,
+  sepolia,
+  mainnet,
+  polygon,
+  gnosis,
+  optimism,
+  arbitrum,
+} from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import farcasterFrame from "@farcaster/frame-wagmi-connector";
-import { WAGMI_CHAIN_OBJ } from "~/lib/dao-constants";
 
 import { injected } from "wagmi/connectors";
 import { FrameSDKProvider } from "./FramesSDKProvider";
+import { DaoRecordProvider } from "./DaoRecordProvider";
+import { DaoHooksProvider } from "./DaoHooksProvider";
 
 // console.log("sdk", sdk.context);
 
 export const config = createConfig({
   // chains: [base, sepolia],
-  chains: [WAGMI_CHAIN_OBJ],
+  chains: [base, sepolia, mainnet, polygon, gnosis, optimism, arbitrum],
   transports: {
     // Configure dedicated RPC providers when using in production
-    // [base.id]: http(),
-    [WAGMI_CHAIN_OBJ.id]: http(),
+    [base.id]: http(),
+    [sepolia.id]: http(),
+    [mainnet.id]: http(),
+    [polygon.id]: http(),
+    [gnosis.id]: http(),
+    [optimism.id]: http(),
+    [arbitrum.id]: http(),
   },
   // connectors: [farcasterFrame()],
   connectors: [injected()],
 });
 
 const queryClient = new QueryClient();
+
+const daoHooksConfig = {
+  graphKey: process.env.NEXT_PUBLIC_GRAPH_KEY || "",
+};
 
 export default function ClientProviders({
   children,
@@ -30,7 +49,11 @@ export default function ClientProviders({
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <FrameSDKProvider>{children}</FrameSDKProvider>
+        <FrameSDKProvider>
+          <DaoHooksProvider keyConfig={daoHooksConfig}>
+            <DaoRecordProvider>{children}</DaoRecordProvider>
+          </DaoHooksProvider>
+        </FrameSDKProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );
