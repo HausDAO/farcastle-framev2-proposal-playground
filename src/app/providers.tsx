@@ -2,13 +2,13 @@
 
 import dynamic from "next/dynamic";
 
-const WagmiProvider = dynamic(
-  () => import("~/components/providers/WagmiProvider"),
+const ClientProviders = dynamic(
+  () => import("~/components/providers/ClientProviders"),
   {
     ssr: false,
   }
 );
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  return <WagmiProvider>{children}</WagmiProvider>;
+  return <ClientProviders>{children}</ClientProviders>;
 }

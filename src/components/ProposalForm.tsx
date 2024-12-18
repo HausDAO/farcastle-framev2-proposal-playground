@@ -8,19 +8,28 @@ import {
   useConnect,
   // useChainId,
   useWriteContract,
+  useChainId,
+  useSwitchChain,
 } from "wagmi";
 
 import { fromHex } from "viem";
-import { config } from "~/components/providers/WagmiProvider";
-import { Button } from "~/components/ui/Button";
+import { Button } from "~/components/ui/button";
 // import { truncateAddress } from "~/lib/utils";
 import { prepareTX } from "~/lib/tx-prepper/tx-prepper";
-import { TX } from "~/lib/tx-prepper/tx";
-import { DAO_ID, DAO_CHAIN, DAO_SAFE } from "~/lib/dao-constants";
+import { getExplorerUrl, getWagmiChainObj } from "~/lib/dao-constants";
 import { useParams } from "next/navigation";
-import { FORM_CONFIGS, FormConfig, FormValues } from "~/lib/form-configs";
-import { SignalShares } from "./forms/SignalShares";
+import {
+  FORM_CONFIGS,
+  FormConfig,
+  FormValues,
+  validFormId,
+} from "~/lib/form-configs";
 import { ValidNetwork } from "~/lib/tx-prepper/prepper-types";
+import { useFrameSDK } from "./providers/FramesSDKProvider";
+import { config } from "./providers/ClientProviders";
+import { FormSwitcher } from "./forms/FormSwitcher";
+import { useDaoRecord } from "./providers/DaoRecordProvider";
+
 // @ts-expect-error find type
 const getPropidFromReceipt = (receipt): number | null => {
   if (!receipt || !receipt.logs[0].topics[1]) return null;
@@ -28,26 +37,24 @@ const getPropidFromReceipt = (receipt): number | null => {
   return fromHex(receipt.logs[0].topics[1], "number");
 };
 
-// get prop type from param
-// get config for that
-// // submit button text, form component, tx
-
 export default function ProposalForm() {
-  const [isSDKLoaded, setIsSDKLoaded] = useState(false);
+  const { isLoaded } = useFrameSDK();
+
+  const { daoid, daochain, daosafe, daochainid } = useDaoRecord();
+
   const [propid, setPropid] = useState<number | null>(null);
   const [formConfig, setFormConfig] = useState<FormConfig | null>(null);
   const [formValues, setFormValues] = useState<FormValues>({});
+  const [validFields, setValidFields] = useState<boolean>(false);
 
   const { address, isConnected } = useAccount();
-  // const chainId = useChainId();
+  const chainId = useChainId();
+  const { switchChain } = useSwitchChain();
 
-  // TODO: fix this
-  // const validChain = chainId === DAO_CHAIN_ID;
-  const validChain = true;
+  const validChain = chainId === daochainid;
 
   const params = useParams<{ proposaltype: string }>();
 
-  console.log("params", params);
   const {
     writeContract,
     data: hash,
@@ -67,21 +74,10 @@ export default function ProposalForm() {
   const { connect } = useConnect();
 
   useEffect(() => {
-    // todo: valdiate id
-    if (params.proposaltype) {
+    if (params.proposaltype && validFormId(params.proposaltype)) {
       setFormConfig(FORM_CONFIGS[params.proposaltype]);
     }
   }, [params]);
-
-  useEffect(() => {
-    const load = async () => {
-      sdk.actions.ready({});
-    };
-    if (sdk && !isSDKLoaded) {
-      setIsSDKLoaded(true);
-      load();
-    }
-  }, [isSDKLoaded]);
 
   useEffect(() => {
     if (!receiptData || !receiptData.logs[0].topics[1]) return;
@@ -90,34 +86,34 @@ export default function ProposalForm() {
 
   const openProposalCastUrl = useCallback(() => {
     sdk.actions.openUrl(
-      `https://warpcast.com/~/compose?text=&embeds[]=https://frames.farcastle.net/molochv3/${DAO_CHAIN}/${DAO_ID}/proposals/${propid}`
+      `https://warpcast.com/~/compose?text=&embeds[]=https://frames.farcastle.net/molochv3/${daochain}/${daoid}/proposals/${propid}`
     );
-  }, [propid]);
+  }, [propid, daoid, daochain]);
 
   const openUrl = useCallback(() => {
-    sdk.actions.openUrl(`https://basescan.org/tx/${hash}`);
-  }, [hash]);
+    sdk.actions.openUrl(`${getExplorerUrl(daochain)}/tx/${hash}`);
+  }, [hash, daochain]);
 
   const handleSend = async () => {
+    console.log("formValues", formValues);
+
+    if (!formConfig) return;
+
     const wholeState = {
       formValues: {
         ...formValues,
         recipient: address,
-        sharesRequested: "1000000000000000000",
-        title: "Proposal Title",
-        description: "Proposal Description",
-        link: "Proposal Link",
       },
-      chainId: DAO_CHAIN,
-      safeId: DAO_SAFE,
-      daoId: DAO_ID,
+      chainId: daochain,
+      safeId: daosafe,
+      daoId: daoid,
       localABIs: {},
     };
 
     const txPrep = await prepareTX({
-      tx: TX.SIGNAL_SHARES,
-      chainId: DAO_CHAIN as ValidNetwork,
-      safeId: DAO_SAFE,
+      tx: formConfig.tx,
+      chainId: daochain as ValidNetwork,
+      safeId: daosafe,
       appState: wholeState,
       argCallbackRecord: {},
       localABIs: {},
@@ -139,27 +135,34 @@ export default function ProposalForm() {
     return <div className="text-red-500 text-xs mt-1">{error.message}</div>;
   };
 
-  if (!isSDKLoaded) {
+  if (!isLoaded) {
     return <div>Loading...</div>;
   }
 
-  console.log("formConfig", formConfig);
-
   if (!formConfig) return null;
 
-  // better validation on fields
   const disableSubmit =
-    !isConnected || isSendTxPending || !validChain || isConfirming || !!hash;
+    !isConnected ||
+    isSendTxPending ||
+    !validChain ||
+    isConfirming ||
+    !!hash ||
+    !validFields;
 
   return (
     <div className="w-full min-h-[695px]">
       <div className="w-[300px] mx-auto py-4 px-2bg">
         <div className="flex flex-col justify-between">
           <div>
-            <SignalShares
+            <FormSwitcher
+              formid={formConfig.id}
               isConfirmed={isConfirmed}
+              formValues={formValues}
+              validFields={validFields}
               setFormValues={setFormValues}
+              setValidFields={setValidFields}
             />
+
             {isConnected && !isConfirmed && (
               <>
                 <div className="mb-4">
@@ -187,6 +190,16 @@ export default function ProposalForm() {
               </>
             )}
           </div>
+
+          {isConnected && !validChain && (
+            <Button
+              onClick={() =>
+                switchChain({ chainId: getWagmiChainObj(daochain).id })
+              }
+            >
+              Switch Chain
+            </Button>
+          )}
 
           {propid && (
             <div className="my-2">

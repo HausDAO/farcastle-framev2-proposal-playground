@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, ChangeEventHandler, useCallback } from "react";
-import sdk, { FrameContext } from "@farcaster/frame-sdk";
+import sdk from "@farcaster/frame-sdk";
 import {
   useAccount,
   useWaitForTransactionReceipt,
@@ -12,20 +12,15 @@ import {
 } from "wagmi";
 
 import { fromHex } from "viem";
-import { config } from "~/components/providers/WagmiProvider";
-import { Button } from "~/components/ui/Button";
+import { Button } from "~/components/ui/button";
 import { Textarea } from "./ui/textarea";
 import { prepareTX } from "~/lib/tx-prepper/tx-prepper";
 import { TX } from "~/lib/tx-prepper/tx";
-import {
-  DAO_ID,
-  DAO_CHAIN,
-  DAO_SAFE,
-  DAO_CHAIN_ID,
-  EXPLORER_URL,
-  WAGMI_CHAIN_OBJ,
-} from "~/lib/dao-constants";
+import { getExplorerUrl, getWagmiChainObj } from "~/lib/dao-constants";
 import { ValidNetwork } from "~/lib/tx-prepper/prepper-types";
+import { useFrameSDK } from "./providers/FramesSDKProvider";
+import { config } from "./providers/ClientProviders";
+import { useDaoRecord } from "./providers/DaoRecordProvider";
 // @ts-expect-error find type
 const getPropidFromReceipt = (receipt): number | null => {
   if (!receipt || !receipt.logs[0].topics[1]) return null;
@@ -34,16 +29,17 @@ const getPropidFromReceipt = (receipt): number | null => {
 };
 
 export default function WhisperForm() {
-  const [isSDKLoaded, setIsSDKLoaded] = useState(false);
+  const { context, isLoaded } = useFrameSDK();
+  const { daoid, daochain, daosafe, daochainid } = useDaoRecord();
+
   const [secret, setSecret] = useState<string | null>(null);
   const [propid, setPropid] = useState<number | null>(null);
-  const [context, setContext] = useState<FrameContext>();
 
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
 
-  const validChain = chainId === DAO_CHAIN_ID;
+  const validChain = chainId === daochainid;
 
   const handleTextInput = (event: ChangeEventHandler<HTMLTextAreaElement>) => {
     // @ts-expect-error change event type
@@ -69,17 +65,6 @@ export default function WhisperForm() {
   const { connect } = useConnect();
 
   useEffect(() => {
-    const load = async () => {
-      setContext(await sdk.context);
-      sdk.actions.ready({});
-    };
-    if (sdk && !isSDKLoaded) {
-      setIsSDKLoaded(true);
-      load();
-    }
-  }, [isSDKLoaded]);
-
-  useEffect(() => {
     if (!receiptData || !receiptData.logs[0].topics[1]) return;
     console.log("receiptData", receiptData);
     setPropid(getPropidFromReceipt(receiptData));
@@ -88,13 +73,13 @@ export default function WhisperForm() {
   const openProposalCastUrl = useCallback(() => {
     console.log("cast url propid", propid);
     sdk.actions.openUrl(
-      `https://warpcast.com/~/compose?text=&embeds[]=https://frames.farcastle.net/molochv3/${DAO_CHAIN}/${DAO_ID}/proposals/${propid}`
+      `https://warpcast.com/~/compose?text=&embeds[]=https://frames.farcastle.net/molochv3/${daochain}/${daoid}/proposals/${propid}`
     );
-  }, [propid]);
+  }, [propid, daoid, daochain]);
 
   const openUrl = useCallback(() => {
-    sdk.actions.openUrl(`${EXPLORER_URL}/tx/${hash}`);
-  }, [hash]);
+    sdk.actions.openUrl(`${getExplorerUrl(daochain)}/tx/${hash}`);
+  }, [hash, daochain]);
 
   const handleSend = async () => {
     const wholeState = {
@@ -105,16 +90,16 @@ export default function WhisperForm() {
         recipient: address,
         sharesRequested: "1000000000000000000",
       },
-      chainId: DAO_CHAIN,
-      safeId: DAO_SAFE,
-      daoId: DAO_ID,
+      chainId: daochain,
+      safeId: daosafe,
+      daoId: daoid,
       localABIs: {},
     };
 
     const txPrep = await prepareTX({
       tx: TX.SIGNAL_SHARES,
-      chainId: DAO_CHAIN as ValidNetwork,
-      safeId: DAO_SAFE,
+      chainId: daochain as ValidNetwork,
+      safeId: daosafe,
       appState: wholeState,
       argCallbackRecord: {},
       localABIs: {},
@@ -136,11 +121,9 @@ export default function WhisperForm() {
     return <div className="text-red-500 text-xs mt-1">{error.message}</div>;
   };
 
-  if (!isSDKLoaded) {
+  if (!isLoaded) {
     return <div>Loading...</div>;
   }
-
-  console.log("validChain", validChain);
 
   const hasSecret = secret && secret.length > 5;
   const disableSubmit =
@@ -202,9 +185,11 @@ export default function WhisperForm() {
 
             {isConnected && !validChain && (
               <Button
-                onClick={() => switchChain({ chainId: WAGMI_CHAIN_OBJ.id })}
+                onClick={() =>
+                  switchChain({ chainId: getWagmiChainObj(daochain).id })
+                }
               >
-                Switch to Base
+                Switch Chain
               </Button>
             )}
           </div>

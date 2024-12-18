@@ -119,4 +119,36 @@ export const TX: Record<string, TXLego> = {
       },
     ],
   }),
+  REQUEST_MEMBERSHIP: buildMultiCallTX({
+    id: "REQUEST_MEMBERSHIP",
+    JSONDetails: {
+      type: "JSONDetails",
+      jsonSchema: {
+        title: `.formValues.title`,
+        description: `.formValues.description`,
+        contentURI: `.formValues.link`,
+        contentURIType: { type: "static", value: "url" },
+        proposalType: {
+          type: "static",
+          value: ProposalTypeIds.IssueSharesLoot,
+        },
+      },
+    },
+    actions: [
+      {
+        contract: {
+          type: "static",
+          contractName: "Current DAO (Baal)",
+          abi: LOCAL_ABI.BAAL,
+          targetAddress: ".daoId",
+        },
+        method: "mintShares",
+        args: [
+          nestInArray(".formValues.recipient"),
+          nestInArray(".formValues.sharesRequested"),
+          nestInArray(".formValues.lootRequested"),
+        ],
+      },
+    ],
+  }),
 };

@@ -1,34 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import sdk from "@farcaster/frame-sdk";
 import Link from "next/link";
-import { Button } from "./ui/Button";
+import { Button } from "./ui/button";
 import { useParams } from "next/navigation";
+import { useFrameSDK } from "./providers/FramesSDKProvider";
 
 export default function ProposalList() {
-  const [isSDKLoaded, setIsSDKLoaded] = useState(false);
+  const { isLoaded } = useFrameSDK();
 
   const params = useParams<{ chainid: string; daoid: string }>();
 
-  useEffect(() => {
-    const load = async () => {
-      sdk.actions.ready({});
-    };
-    if (sdk && !isSDKLoaded) {
-      setIsSDKLoaded(true);
-      load();
-    }
-  }, [isSDKLoaded]);
-
-  if (!isSDKLoaded) {
+  if (!isLoaded) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="w-[300px] mx-auto py-4 px-2">
-      <h1 className="text-2xl font-bold text-center my-4">Proposal Types</h1>
-
       <div className="mb-4">
         <Link href={`/dao/${params.chainid}/${params.daoid}/POST_SIGNAL`}>
           <Button>Propose Signal</Button>
