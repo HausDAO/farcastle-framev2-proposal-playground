@@ -23,7 +23,11 @@ export default function ProposalList() {
       </div>
 
       <div className="mb-4">
-        <Button disabled={true}>Request Funding</Button>
+        <Link
+          href={`/dao/${params.chainid}/${params.daoid}/REQUEST_MEMBERSHIP`}
+        >
+          <Button>Request Fundings</Button>
+        </Link>
       </div>
 
       <div className="mb-4">

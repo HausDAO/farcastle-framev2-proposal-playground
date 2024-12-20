@@ -11,7 +11,7 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import farcasterFrame from "@farcaster/frame-wagmi-connector";
 
-import { injected } from "wagmi/connectors";
+// import { injected } from "wagmi/connectors";
 import { FrameSDKProvider } from "./FramesSDKProvider";
 import { DaoRecordProvider } from "./DaoRecordProvider";
 import { DaoHooksProvider } from "./DaoHooksProvider";
@@ -31,8 +31,8 @@ export const config = createConfig({
     [optimism.id]: http(),
     [arbitrum.id]: http(),
   },
-  // connectors: [farcasterFrame()],
-  connectors: [injected()],
+  connectors: [farcasterFrame()],
+  // connectors: [injected()],
 });
 
 const queryClient = new QueryClient();
