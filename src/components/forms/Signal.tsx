@@ -2,6 +2,8 @@ import { ChangeEvent, Dispatch, useEffect } from "react";
 import { Textarea } from "../ui/textarea";
 import { FormValues } from "~/lib/form-configs";
 import { Input } from "../ui/input";
+import { Checkbox } from "../ui/checkbox";
+import { Label } from "../ui/label";
 
 export const Signal = ({
   isConfirmed,
@@ -58,12 +60,25 @@ export const Signal = ({
             />
           </div>
           <div className="my-3">
+            <Label>Link</Label>
             <Input
               placeholder="Link"
               id="link"
               type="url"
               onChange={(event) => handleTextInput(event)}
             />
+          </div>
+
+          <div className="my-3">
+            <div className="flex items-center space-x-2">
+              <Checkbox id="terms" />
+              <label
+                htmlFor="terms"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Accept terms and conditions
+              </label>
+            </div>
           </div>
         </>
       )}
